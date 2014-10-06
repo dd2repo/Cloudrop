@@ -24,21 +24,21 @@ end)
 function OnStart()
     if myHero.charName ~= 'Morgana' then return end
 
-		Morgana = MenuConfig("Mini Morgana")
+	Morgana = MenuConfig("Mini Morgana")
     	Morgana:Icon("fa-user")
 
-  	 	Morgana:Menu("Combo", "Combo Settings")
+  	Morgana:Menu("Combo", "Combo Settings")
       	Morgana.Combo:Icon("fa-folder-o")
      	Morgana.Combo:Section("Combo Settings", "Combo Settings")  
     	Morgana.Combo:Boolean("useq", "Use Q", true)
     	Morgana.Combo:Boolean("usew", "Use W", true)
   
-  		Morgana:Menu("Harass", "Harass Settings")
+  	Morgana:Menu("Harass", "Harass Settings")
       	Morgana.Harass:Icon("fa-folder-o")
      	Morgana.Harass:Section("Harass Settings", "Harass Settings")  
-		Morgana.Harass:Boolean("usew", "Use W", true)
+	Morgana.Harass:Boolean("usew", "Use W", true)
 
-		Morgana:Menu("Ks", "KS Settings")
+	Morgana:Menu("Ks", "KS Settings")
       	Morgana.Ks:Icon("fa-github-alt")
       	Morgana.Ks:Section("KS Settings", "KS Settings")  
       	Morgana.Ks:Boolean("useq", "Use Q", true)
