@@ -137,7 +137,6 @@ function Combo()
 	 			local isCollision, CollisionObjects = BasicCollision.GetCollision(Target, myHero, 110)
 				if PPos and PPos.x and PPos.y and PPos.z and not isCollision and WHC >= 2 then
 					myHero:CastSpell(0, PPos.x, PPos.z)
-
 				end
 			
 			elseif Morgana.Combo.usew:Value() and Morgana.Combo.onlywq:Value() and tdis < 1075 and Wready and (TargetHasBuff(Target, "DarkBindingMissile") or TargetHasBuff(Target, "Stun")) then 
@@ -227,7 +226,7 @@ function Autokill()
 	local wdmg = myHero:CalcMagicDamage(hero, (((5+7*myHero:GetSpellData(1).level)*(1+(1-hero.health/hero.maxHealth)*0.5))+(myHero.ap*0.11)*(1+(1-hero.health/hero.maxHealth)*0.5)))
 	local rdmg = myHero:CalcMagicDamage(hero, (75*myHero:GetSpellData(3).level)+75+0.7*myHero.ap)
 
-		if hero ~= nil and hero.type == myHero.type and hero.team == TEAM_ENEMY and not hero.dead then
+		if hero ~= nil and hero.type == myHero.type and hero.team == TEAM_ENEMY and hero.visible and not hero.dead then
 
 			local heroDistance = Allclass.GetDistance(hero)
 
