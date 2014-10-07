@@ -27,7 +27,7 @@ function OnStart()
 	Morgana = MenuConfig("Mini Morgana")
     	Morgana:Icon("fa-user")
 
-  	 Morgana:Menu("Combo", "Combo Settings")
+  	Morgana:Menu("Combo", "Combo Settings")
       	Morgana.Combo:Icon("fa-folder-o")
      	Morgana.Combo:Section("Combo Settings", "Combo Settings")  
     	Morgana.Combo:Boolean("useq", "Use Q", true)
