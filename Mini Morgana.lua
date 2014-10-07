@@ -24,10 +24,10 @@ end)
 function OnStart()
     if myHero.charName ~= 'Morgana' then return end
 
-	Morgana = MenuConfig("Mini Morgana")
+		Morgana = MenuConfig("Mini Morgana")
     	Morgana:Icon("fa-user")
 
-  	Morgana:Menu("Combo", "Combo Settings")
+  	 	Morgana:Menu("Combo", "Combo Settings")
       	Morgana.Combo:Icon("fa-folder-o")
      	Morgana.Combo:Section("Combo Settings", "Combo Settings")  
     	Morgana.Combo:Boolean("useq", "Use Q", true)
@@ -41,12 +41,12 @@ function OnStart()
     	Morgana.Ultimate:Boolean("user", "Auto-ultimate", true)
     	Morgana.Ultimate:DropDown("targets", "Auto-ultimate if it will hit", 4, {"2 Targets","3 Targets","4 Targets","5 Targets"})
 
-  	Morgana:Menu("Harass", "Harass Settings")
+  		Morgana:Menu("Harass", "Harass Settings")
       	Morgana.Harass:Icon("fa-folder-o")
      	Morgana.Harass:Section("Harass Settings", "Harass Settings")  
-	Morgana.Harass:Boolean("usew", "Use W", true)
+		Morgana.Harass:Boolean("usew", "Use W", true)
 
-	Morgana:Menu("Ks", "KS Settings")
+		Morgana:Menu("Ks", "KS Settings")
       	Morgana.Ks:Icon("fa-github-alt")
       	Morgana.Ks:Section("KS Settings", "KS Settings")  
       	Morgana.Ks:Boolean("useq", "Use Q", true)
@@ -105,7 +105,7 @@ end
 
 function Checks()
 
-    Qready = myHero:CanUseSpell(0) == Game.SpellState.READY
+	Qready = myHero:CanUseSpell(0) == Game.SpellState.READY
     Wready = myHero:CanUseSpell(1) == Game.SpellState.READY
     Eready = myHero:CanUseSpell(2) == Game.SpellState.READY
     Rready = myHero:CanUseSpell(3) == Game.SpellState.READY
