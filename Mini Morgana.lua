@@ -89,7 +89,7 @@ function OnStart()
 	Callback.Bind('Draw', function() OnDraw() end)
 
 
-	Game.Chat.Print("<font color=\"#F5F5F5\">Mini Morgana 1.0 by DeadDevil2 loaded! </font>")
+	Game.Chat.Print("<font color=\"#F5F5F5\">Mini Morgana 1.1 by DeadDevil2 loaded! </font>")
 
 end
 
@@ -157,7 +157,7 @@ function Harass()
 			if Morgana.Harass.usew:Value() and Allclass.GetDistance(Target) < 1075 and Wready then
 			myHero:CastSpell(1, Target.x, Target.z)
 			end
-			
+
 		end
 	end
 end
