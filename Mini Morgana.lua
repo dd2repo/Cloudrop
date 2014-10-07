@@ -133,21 +133,23 @@ function Combo()
 			local tdis = Allclass.GetDistance(Target)
 
 			if Morgana.Combo.useq:Value() and tdis < 1300 and Qready then 
-
 	 			local PPos, WHC  = BasicPrediction.GetPredictedPosition(Target, 1300, 1200, 0.5, 110, true, false, myHero)
 	 			local isCollision, CollisionObjects = BasicCollision.GetCollision(Target, myHero, 110)
-
 				if PPos and PPos.x and PPos.y and PPos.z and not isCollision and WHC >= 2 then
 					myHero:CastSpell(0, PPos.x, PPos.z)
 				end
 			end
-			
-			if Morgana.Combo.usew:Value() and Morgana.Combo.onlywq:Value() and tdis < 1075 and Wready and (TargetHasBuff(Target, "DarkBindingMissile") or TargetHasBuff(Target, "Stun")) then 
-				myHero:CastSpell(1, Target.x, Target.z)
-			
-			elseif Morgana.Combo.usew:Value() and not Morgana.Combo.onlywq:Value() and tdis < 1075 and Wready then
-				myHero:CastSpell(1, Target.x, Target.z)
+
+			if Morgana.Combo.usew:Value() and tdis < 1075 and Wready then 
+				
+				if Morgana.Combo.onlywq:Value() and (TargetHasBuff(Target, "DarkBindingMissile") or TargetHasBuff(Target, "Stun")) then 
+					myHero:CastSpell(1, Target.x, Target.z)
+
+				elseif not Morgana.Combo.onlywq:Value() then
+					myHero:CastSpell(1, Target.x, Target.z)
+				end
 			end
+
 		end
 	end
 end
