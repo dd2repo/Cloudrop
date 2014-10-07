@@ -128,7 +128,7 @@ function Combo()
 
 	if Target ~= nil and Target.type == myHero.type and Target.team == TEAM_ENEMY and not Target.dead then
 
-	local tdis 		= 	Allclass.GetDistance(Target)
+	local tdis 	= 	Allclass.GetDistance(Target)
 	local onlyeq 	= 	Akali.Combo.onlyeq:Value()
 	local hbuff 	= 	TargetHasBuff(Target, "AkaliMota")
 
