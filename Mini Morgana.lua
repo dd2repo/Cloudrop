@@ -133,13 +133,16 @@ function Combo()
 			local tdis = Allclass.GetDistance(Target)
 
 			if Morgana.Combo.useq:Value() and tdis < 1300 and Qready then 
+
 	 			local PPos, WHC  = BasicPrediction.GetPredictedPosition(Target, 1300, 1200, 0.5, 110, true, false, myHero)
 	 			local isCollision, CollisionObjects = BasicCollision.GetCollision(Target, myHero, 110)
+
 				if PPos and PPos.x and PPos.y and PPos.z and not isCollision and WHC >= 2 then
 					myHero:CastSpell(0, PPos.x, PPos.z)
 				end
+			end
 			
-			elseif Morgana.Combo.usew:Value() and Morgana.Combo.onlywq:Value() and tdis < 1075 and Wready and (TargetHasBuff(Target, "DarkBindingMissile") or TargetHasBuff(Target, "Stun")) then 
+			if Morgana.Combo.usew:Value() and Morgana.Combo.onlywq:Value() and tdis < 1075 and Wready and (TargetHasBuff(Target, "DarkBindingMissile") or TargetHasBuff(Target, "Stun")) then 
 				myHero:CastSpell(1, Target.x, Target.z)
 			
 			elseif Morgana.Combo.usew:Value() and not Morgana.Combo.onlywq:Value() and tdis < 1075 and Wready then
@@ -238,14 +241,16 @@ function Autokill()
 				if PPos and PPos.x and PPos.y and PPos.z and not isCollision and WHC >= 2 then
 					myHero:CastSpell(0, PPos.x, PPos.z)
 				end
+			end
 			
-			elseif Wready and hero.health < wdmg*2 and heroDistance < 1075 and Morgana.Ks.usew:Value() then
+			if Wready and hero.health < wdmg*2 and heroDistance < 1075 and Morgana.Ks.usew:Value() then
 				myHero:CastSpell(1, hero.x, hero.z)
+			end
 			
 			elseif Wready and hero.health < wdmg*4 and heroDistance < 1075 and (TargetHasBuff(hero, "DarkBindingMissile") or TargetHasBuff(hero, "Stun")) and Morgana.Ks.usew:Value() then
 				myHero:CastSpell(1, hero.x, hero.z)
 			
-			elseif Rready and hero.health < rdmg*2 and heroDistance < 600 and Morgana.Ks.user:Value() then
+			if Rready and hero.health < rdmg*2 and heroDistance < 600 and Morgana.Ks.user:Value() then
 				myHero:CastSpell(3)
 			end
 		end
