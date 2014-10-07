@@ -128,7 +128,7 @@ function Combo()
 
 	if Target ~= nil and Target.type == myHero.type and Target.team == TEAM_ENEMY and not Target.dead then
 
-	local tdis 	= 	Allclass.GetDistance(Target)
+	local tdis 		= 	Allclass.GetDistance(Target)
 	local onlyeq 	= 	Akali.Combo.onlyeq:Value()
 	local hbuff 	= 	TargetHasBuff(Target, "AkaliMota")
 
@@ -256,7 +256,9 @@ end
 function Autokill()
 	for i = 1, Game.HeroCount() do
 		hero = Game.Hero(i)
-		heroDistance = Allclass.GetDistanceSqr(hero)
+
+		local heroDistance = Allclass.GetDistanceSqr(hero)
+		
 		if heroDistance < 640000 and hero ~= nil and hero.type == myHero.type and hero.team == TEAM_ENEMY and not hero.dead then
 
 			local qdmg = myHero:CalcMagicDamage(hero, (20*myHero:GetSpellData(0).level+15+.4*myHero.ap))
