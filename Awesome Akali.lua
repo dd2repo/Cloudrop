@@ -117,6 +117,7 @@ function OnTick()
 	Autostealth()
 	Harass()
 	Items()
+	Autozhonya()
 
 end
 
@@ -130,7 +131,7 @@ function Checks()
 end
 
 function ValidTarget(Target)
-	return Target ~= nil and Target.type == myHero.type and Target.team == TEAM_ENEMY and not Target.dead and hero.visible
+	return Target ~= nil and Target.type == myHero.type and Target.team == TEAM_ENEMY and not Target.dead and hero.visible and  Target.health > 0 and Target.isTargetable
 end
 
 
@@ -188,7 +189,7 @@ end
 
 function Combo()
 
-	if Target ~= nil and Target.type == myHero.type and Target.team == TEAM_ENEMY and not Target.dead then
+	if ValidTarget(Target) then
 
 	local tdis		=	Allclass.GetDistance(Target)
 	local onlyeq	=	Akali.Combo.onlyeq:Value()
@@ -245,7 +246,7 @@ end
 function Harass()
 	if Akali.harasskey:IsPressed() then
 
-		if Target ~= nil and Target.type == myHero.type and Target.team == TEAM_ENEMY and not Target.dead then
+		if ValidTarget(Target) then
 
 			if Akali.Harass.useq:Value() and Allclass.GetDistance(Target) < 600 and Qready then
 			myHero:CastSpell(0, Target)
@@ -329,7 +330,7 @@ function Autokill()
 
 		local heroDistance = Allclass.GetDistanceSqr(hero)
 		
-		if heroDistance < 640000 and hero ~= nil and hero.type == myHero.type and hero.team == TEAM_ENEMY and not hero.dead then
+		if heroDistance < 640000 and ValidTarget(hero) then
 
 			local qdmg = myHero:CalcMagicDamage(hero, (20*myHero:GetSpellData(0).level+15+.4*myHero.ap))
 			local edmg = myHero:CalcMagicDamage(hero, (25*myHero:GetSpellData(2).level+5+0.3*myHero.ap+0.6*myHero.totalDamage))
