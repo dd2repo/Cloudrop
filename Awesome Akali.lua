@@ -191,7 +191,7 @@ function Combo()
 
 	if ValidTarget(Target) then
 
-	local tdis		=	Allclass.GetDistance(Target)
+	local tdis	=	Allclass.GetDistance(Target)
 	local onlyeq	=	Akali.Combo.onlyeq:Value()
 	local hbuff 	=	TargetHasBuff(Target, "AkaliMota")
 
