@@ -47,6 +47,17 @@ function OnStart()
 		Akali.Harass:Section("Harass Settings", "Harass Settings")  
 		Akali.Harass:Boolean("useq", "Use Q", true)
 
+		Akali:Menu("Items", "Item Settings")
+		Akali.Items:Icon("fa-folder-o")
+		Akali.Items:Section("Item Settings", "Item Settings")  
+		Akali.Items:Boolean("usedfg", "Use Deathfire Grasp", true)
+		Akali.Items:Boolean("usebt", "Use Blackfire Torch", true)
+		Akali.Items:Boolean("usehg", "Use Hextech Gunblade", true)
+		Akali.Items:Boolean("usebc", "Use Bilgewater Cutlass", true) 
+		Akali.Items:Section("Advanced", "Advanced")  
+		Akali.Items:Boolean("usez", "Auto Zhonya's", true)
+		Akali.Items:Slider("hz", "Zhonya's if Health under -> %", 10, 0, 100)
+
 		Akali:Menu("Ks", "KS Settings")
 		Akali.Ks:Icon("fa-github-alt")
 		Akali.Ks:Section("KS Settings", "KS Settings")  
@@ -67,13 +78,11 @@ function OnStart()
 		Akali:Menu("Adds", "Additionals")
 		Akali.Adds:Icon("fa-folder-o")
 		Akali.Adds:Section("Additionals", "Additionals")  
-		Akali.Adds:Boolean("orbwalk", "Orbwalk", true)
-		--Akali.Adds:Boolean("usez", "Auto Zhonya's", true)
-		--Akali.Adds:Slider("hz", "Zhonya's if Health under -> %", 75, 0, 100)
+		Akali.Adds:DropDown("Orbwalk", "Orbwalker", 1, {"Akali","SxOrbWalk"})
 
 
 		Akali:Section('Keys', 'Keys')
-		Akali:KeyBinding('combokey', 'Combo', 'SPACE')
+		Akali:KeyBinding('combokey', 'Combo', 'S')
 		Akali:KeyBinding('harasskey', 'Harass', 'A')
 
 
@@ -93,13 +102,21 @@ end
 
 function OnTick()
 
-	Target = TS:GetTarget(800) 
+	if Akali.Adds.Orbwalk:Value() == 1 then
+		Target = TS:GetTarget(800)
+
+	elseif Akali.Adds.Orbwalk:Value() == 2 then 
+		Target = SxOrb:GetTarget()
+		SxOrb:EnableAttacks()
+	end
+
 	Checks()
 	Combo()
 	Orbwalk()
 	Autokill()
 	Autostealth()
 	Harass()
+	Items()
 
 end
 
@@ -110,6 +127,10 @@ function Checks()
 	Eready = myHero:CanUseSpell(2) == Game.SpellState.READY
 	Rready = myHero:CanUseSpell(3) == Game.SpellState.READY
 
+end
+
+function ValidTarget(Target)
+	return Target ~= nil and Target.type == myHero.type and Target.team == TEAM_ENEMY and not Target.dead and hero.visible
 end
 
 
@@ -124,11 +145,52 @@ function TargetHasBuff(unit, name)
 end
 
 
+function GetItemSlot(id, unit)
+	local unit = unit or myHero
+	for i = 4, 9, 1 do
+		if unit:GetItem(i) and unit:GetItem(i).id == id then
+			return i
+		end
+	end
+end
+
+function CastItem(ItemID, var1, var2)
+	local slot = GetItemSlot(ItemID)
+	if slot == nil then return end
+	if (myHero:CanUseSpell(slot) == Game.SpellState.READY) then
+		if (var2 ~= nil) then
+			myHero:CastSpell(slot, var1, var2)
+		elseif (var1 ~= nil) then
+			myHero:CastSpell(slot, var1)
+		else
+			myHero:CastSpell(slot)
+		end
+	end
+end
+
+
+function Items()
+
+	if ValidTarget(Target) and Akali.combokey:IsPressed() then
+
+	local tdis	=	Allclass.GetDistance(Target)
+
+		if Akali.Items.usedfg:Value() 	and 	tdis < 750 then CastItem(3128, Target) end
+		if Akali.Items.usebt:Value() 	and 	tdis < 750 then CastItem(3188, Target) end
+		if Akali.Items.usehg:Value() 	and 	tdis < 700 then CastItem(3146, Target) end
+		if Akali.Items.usebc:Value() 	and 	tdis < 700 then CastItem(3144, Target) end
+
+	end
+end
+
+
+
+
 function Combo()
 
 	if Target ~= nil and Target.type == myHero.type and Target.team == TEAM_ENEMY and not Target.dead then
 
-	local tdis	=	Allclass.GetDistance(Target)
+	local tdis		=	Allclass.GetDistance(Target)
 	local onlyeq	=	Akali.Combo.onlyeq:Value()
 	local hbuff 	=	TargetHasBuff(Target, "AkaliMota")
 
@@ -241,17 +303,25 @@ function Autostealth()
 end
 
 function Autozhonya()
-	if Akali.Adds.usez:Value() then
-		if myHero.health <= (myHero.maxHealth*(Akali.Adds.hz:Value()/100)) then Allclass.CastItem(3157) 
+	if Akali.Items.usez:Value() then
+		if myHero.health <= (myHero.maxHealth*(Akali.Items.hz:Value()/100)) then CastItem(3157) CastItem(3090)
 		end
 	end
 end
 
-function Orbwalk()
-	if (Akali.combokey:IsPressed() or Akali.harasskey:IsPressed()) and Akali.Adds.orbwalk:Value() then
-		myHero:Move(mousePos.x, mousePos.z)
+
+
+
+function Orbwalk()    
+	if Akali.Adds.Orbwalk:Value() == 1 then                                                                                                          
+		if (Akali.combokey:IsPressed() or Akali.harasskey:IsPressed()) and (not ValidTarget(Target) or (ValidTarget(Target) and (Allclass.GetDistance(Target) > 150 or Allclass.GetDistance(Target, mousePos) > 130))) then
+			myHero:Move(mousePos.x, mousePos.z)
+		end
 	end
 end
+
+
+
 
 function Autokill()
 	for i = 1, Game.HeroCount() do
