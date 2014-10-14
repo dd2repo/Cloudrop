@@ -12,7 +12,7 @@ AddOn for 2.0 by DeadDevil2
 ]]
 
 
-local TS = TargetSelector(TargetSelector_Mode.LOWEST_HEALTH, TargetSelector_DamageType.MAGIC) 
+local TS 	= TargetSelector(TargetSelector_Mode.LOWEST_HEALTH, TargetSelector_DamageType.MAGIC) 
 local Qrange	=	700
 local Wrange	=	600
 local Erange	=	925
