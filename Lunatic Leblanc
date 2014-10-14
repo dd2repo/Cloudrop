@@ -19,7 +19,7 @@ local Erange	=	925
 local Rrange	=	750
 local GetCombo	=	true
 local GetHarass = 	true
-local me		= 	myHero
+local me 	= 	myHero
 local SpellE 	= 	{ Range = 925, Width = 70, Speed = 1600, Delay = 0.5, mCollision = false, hCollision = false }
 local Target, tdis, thp = nil, nil, nil
 local Qdelay	= 	310
@@ -168,13 +168,13 @@ function Checks()
 	Rready = myHero:CanUseSpell(3) 	== Game.SpellState.READY
 	--Dready = me:CanUseSpell(DFG) 	== Game.SpellState.READY
 
-	if		myHero:GetSpellData(3).name 	== "LeblancChaosOrbM" then ultprex = 1
+	if	myHero:GetSpellData(3).name 	== "LeblancChaosOrbM" then ultprex = 1
 	elseif 	myHero:GetSpellData(3).name 	== "LeblancSlideM" then ultprex = 2
 	elseif 	myHero:GetSpellData(3).name 	== "Leblancslidereturnm" then ultprex = 3
 	elseif 	myHero:GetSpellData(3).name 	== "LeblancSoulShackleM" then ultprex = 4
 	end
 
-	if 		myHero:GetSpellData(1).name 	== "leblancslidereturn" then backw = true
+	if 	myHero:GetSpellData(1).name 	== "leblancslidereturn" then backw = true
 	elseif	myHero:GetSpellData(1).name 	== "LeblancSlide" then backw = false
 	end
 
@@ -314,10 +314,10 @@ function Combo()
 
 		if ValidTarget(Target) then
 
-		local me 			= 	myHero
+		local me 		= 	myHero
 		local Wready2		=	me:GetSpellData(1).currentCd < 0.5
 		local Eready2		=	me:GetSpellData(2).currentCd < 1
-		local thp			= 	Target.health
+		local thp		= 	Target.health
 		
 			if GetCombo then
 
@@ -332,7 +332,7 @@ function Combo()
 					local Maxdmg	=	Qdmg*2+Wdmg+Edmg+RQdmg*2
 					local MaxDFGdmg	=	Ddmg+1.2*(Qdmg*2+Wdmg+Edmg+RQdmg*2)
 					local QWRdmg	=	Qdmg*2+Wdmg+RQdmg*2
-					local QRdmg		=	Qdmg*2+RQdmg
+					local QRdmg	=	Qdmg*2+RQdmg
 					local QWdmg 	=	Qdmg*2+Wdmg
 					local QRWdmg	=   Qdmg*2+RQdmg*2+Wdmg
 
@@ -507,7 +507,7 @@ function Combo()
 					local Edmg		=	me:CalcMagicDamage(Target, (25*me:GetSpellData(2).level+15+0.5*me.ap))	
 					local Ddmg		=	me:CalcMagicDamage(Target, (0.15*Target.maxHealth))
 
-					local QWdmg 	=	Qdmg*2+Wdmg
+					local QWdmg 		=	Qdmg*2+Wdmg
 
 					GetCombo = false
 					ComboTarget = Target
