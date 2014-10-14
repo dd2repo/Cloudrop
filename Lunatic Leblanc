@@ -12,7 +12,7 @@ AddOn for 2.0 by DeadDevil2
 ]]
 
 
-local TS = TargetSelector(TargetSelector_Mode.LESS_CAST, TargetSelector_DamageType.MAGIC) 
+local TS = TargetSelector(TargetSelector_Mode.LOWEST_HEALTH, TargetSelector_DamageType.MAGIC) 
 local Qrange	=	700
 local Wrange	=	600
 local Erange	=	925
@@ -21,8 +21,8 @@ local GetCombo	=	true
 local GetHarass = 	true
 local me 	= 	myHero
 local SpellE 	= 	{ Range = 925, Width = 70, Speed = 1600, Delay = 0.5, mCollision = false, hCollision = false }
-local Target, tdis, thp = nil, nil, nil
 local Qdelay	= 	310
+local Target, tdis, thp = nil, nil, nil
 
 
 Callback.Bind('Load', function()
@@ -41,9 +41,10 @@ function OnStart()
 		Leblanc:Menu("Combo", "Dynamic Combo")
 		Leblanc.Combo:Section("Combo Settings", "Combo Settings")  
 		Leblanc.Combo:Icon("fa-folder-o")
-		Leblanc.Combo:DropDown("dfg", "DFG Mode", 1, {"Fast","Spare"})
 		Leblanc.Combo:Boolean("usemw", "Use Mimic W", false)
 		Leblanc.Combo:Boolean("useme", "Use Mimic E", false)
+		Leblanc.Combo:Section("Advanced", "Advanced")  
+		Leblanc.Combo:DropDown("dfg", "DFG Mode", 1, {"Fast","Spare"})
 
 
 		Leblanc:Menu("Items", "Zhonya's Settings")
