@@ -162,20 +162,20 @@ end
 
 function Checks()
 
-	Qready = myHero:CanUseSpell(0) == Game.SpellState.READY
-	Wready = myHero:CanUseSpell(1) == Game.SpellState.READY
-	Eready = myHero:CanUseSpell(2) == Game.SpellState.READY
-	Rready = myHero:CanUseSpell(3) == Game.SpellState.READY
-	--Dready = me:CanUseSpell(DFG) == Game.SpellState.READY
+	Qready = myHero:CanUseSpell(0) 	== Game.SpellState.READY
+	Wready = myHero:CanUseSpell(1) 	== Game.SpellState.READY
+	Eready = myHero:CanUseSpell(2) 	== Game.SpellState.READY
+	Rready = myHero:CanUseSpell(3) 	== Game.SpellState.READY
+	--Dready = me:CanUseSpell(DFG) 	== Game.SpellState.READY
 
-	if		myHero:GetSpellData(3).name == "LeblancChaosOrbM" then ultprex = 1
-	elseif 	myHero:GetSpellData(3).name == "LeblancSlideM" then ultprex = 2
-	elseif 	myHero:GetSpellData(3).name == "Leblancslidereturnm" then ultprex = 3
-	elseif 	myHero:GetSpellData(3).name == "LeblancSoulShackleM" then ultprex = 4
+	if		myHero:GetSpellData(3).name 	== "LeblancChaosOrbM" then ultprex = 1
+	elseif 	myHero:GetSpellData(3).name 	== "LeblancSlideM" then ultprex = 2
+	elseif 	myHero:GetSpellData(3).name 	== "Leblancslidereturnm" then ultprex = 3
+	elseif 	myHero:GetSpellData(3).name 	== "LeblancSoulShackleM" then ultprex = 4
 	end
 
-	if 		myHero:GetSpellData(1).name == "leblancslidereturn" then backw = true
-	elseif	myHero:GetSpellData(1).name == "LeblancSlide" then backw = false
+	if 		myHero:GetSpellData(1).name 	== "leblancslidereturn" then backw = true
+	elseif	myHero:GetSpellData(1).name 	== "LeblancSlide" then backw = false
 	end
 
 end
@@ -314,10 +314,10 @@ function Combo()
 
 		if ValidTarget(Target) then
 
-		local me 		= 	myHero
-		local Wready2	=	me:GetSpellData(1).currentCd < 0.5
-		local Eready2	=	me:GetSpellData(2).currentCd < 1
-		local thp		= 	Target.health
+		local me 			= 	myHero
+		local Wready2		=	me:GetSpellData(1).currentCd < 0.5
+		local Eready2		=	me:GetSpellData(2).currentCd < 1
+		local thp			= 	Target.health
 		
 			if GetCombo then
 
