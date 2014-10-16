@@ -335,7 +335,7 @@ function Combo()
 					local QWRdmg	=	Qdmg*2+Wdmg+RQdmg*2
 					local QRdmg	=	Qdmg*2+RQdmg
 					local QWdmg 	=	Qdmg*2+Wdmg
-					local QRWdmg	=   Qdmg*2+RQdmg*2+Wdmg
+					local QRWdmg	=   	Qdmg*2+RQdmg*2+Wdmg
 
 					local PPos, WHC  = BasicPrediction.GetPredictedPosition(Target, SpellE.Range, SpellE.Speed, SpellE.Delay, SpellE.Width, SpellE.mCollision, SpellE.hCollsion, myHero)
 
