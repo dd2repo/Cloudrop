@@ -12,7 +12,6 @@ AddOn for 2.0 by DeadDevil2
 ]]
 
 
-local TS = TargetSelector(TargetSelector_Mode.LOWEST_HEALTH, TargetSelector_DamageType.MAGIC) 
 local Qrange	=	700
 local Wrange	=	600
 local Erange	=	925
@@ -46,6 +45,8 @@ function OnStart()
 		Leblanc.Combo:Boolean("useme", "Use Mimic E", false)
 		Leblanc.Combo:Section("Advanced", "Advanced")  
 		Leblanc.Combo:DropDown("dfg", "DFG Mode", 1, {"Fast","Spare"})
+		Leblanc.Combo:Section("Safe Settings", "Safe Settings")  
+		Leblanc.Combo:Boolean("safe", "Block W usage", false)
 
 
 		Leblanc:Menu("Items", "Zhonya's Settings")
@@ -104,18 +105,18 @@ function OnStart()
 		BasicPrediction.EnablePrediction()
 
 		Color = { Red = Graphics.ARGB(0xFF,0xFF,0,0),
-	        Green = Graphics.ARGB(0xFF,0,0xFF,0),
-	        Blue = Graphics.ARGB(0xFF,0,0,0xFF),
-	        White = Graphics.ARGB(0xFF,0xFF,0xFF,0xFF)
+	            Green = Graphics.ARGB(0xFF,0,0xFF,0),
+	            Blue = Graphics.ARGB(0xFF,0,0,0xFF),
+	            White = Graphics.ARGB(0xFF,0xFF,0xFF,0xFF)
 	            }
 
 	Callback.Bind('Tick', function() OnTick() end)
 	Callback.Bind('Draw', function() OnDraw() end)
 	Callback.Bind('ProcessSpell', function(unit, spell) OnProcessSpell(unit, spell) end)
 
-	lastAttack = 0
-	windUpTime = 3
-	animationTime = 0.65
+    	lastAttack 	= 0
+    	windUpTim 	= 3
+    	animationTime 	= 0.65
 
 	Game.Chat.Print("<font color=\"#9F81F7\">[Lunatic Leblanc Beta]</font><font color=\"#F5F5F5\"> by DeadDevil2 loaded! </font>")
 
@@ -142,11 +143,22 @@ end
 
 --end
 
+function GetTarget(range, magic)
+	local T={Unit=nil,THP=100000}
+	for i=1,Game.HeroCount() do
+		local h=Game.Hero(i)
+		if h and h.valid and h.visible and not h.dead and h.team ~= myHero.team and h.pos:DistanceTo(myHero.pos) < 925 then
+			local THP=(h.health*(1+((magic and h.magicArmor or h.armor)/100)))
+			if THP < T.THP then	T.Unit,T.THP=h,THP	end
+		end	
+	end
+	return T.Unit
+end
 
 function OnTick()
 
 	if Leblanc.Adds.Orbwalk:Value() == 1 then
-		Target = TS:GetTarget(1200)
+		Target = GetTarget(600,true)
 
 	elseif Leblanc.Adds.Orbwalk:Value() == 2 then 
 		Target = SxOrb:GetTarget(1200)
@@ -326,7 +338,7 @@ function Combo()
 
 	ResetCombo()
 
-	if Leblanc.combokey:IsPressed() then
+	if Leblanc.combokey:IsPressed() and not Leblanc.Combo.safe:Value() then
 
 		if ValidTarget(Target) then
 
@@ -352,10 +364,12 @@ function Combo()
 					local QWdmg 	=	Qdmg*2+Wdmg
 					local QRWdmg	=   Qdmg*2+RQdmg*2+Wdmg
 
-					local PPos, WHC  = BasicPrediction.GetPredictedPosition(Target, SpellE.Range, SpellE.Speed, SpellE.Delay, SpellE.Width, SpellE.mCollision, SpellE.hCollsion, myHero)
+					
 
 					GetCombo = false
 					ComboTarget = Target
+
+
 
 					if Ddis and ComboTarget and (thp > Maxdmg or Leblanc.Combo.dfg:Value() == 1) then CastItem(3128, ComboTarget) end -- DFG Cast
 																								
@@ -373,6 +387,7 @@ function Combo()
 
 										me:CastSpell(1, ComboTarget.x, ComboTarget.z)--W Cast
 										Allclass.DelayAction(function()
+											local PPos, WHC  = BasicPrediction.GetPredictedPosition(ComboTarget, SpellE.Range, SpellE.Speed, SpellE.Delay, SpellE.Width, SpellE.mCollision, SpellE.hCollsion, myHero)
 											if not GetCombo and Target == ComboTarget and ValidTarget(ComboTarget, Erange) and Eready and PPos and PPos.x and PPos.y and PPos.z and WHC >= 2 then 
 
 												me:CastSpell(2, PPos.x, PPos.z)--E Cast
@@ -440,10 +455,10 @@ function Combo()
 					local QWEdmg	=	Qdmg*2+Wdmg+Edmg
 					local QWdmg 	=	Qdmg*2+Wdmg	
 
-					local PPos, WHC  = BasicPrediction.GetPredictedPosition(Target, SpellE.Range, SpellE.Speed, SpellE.Delay, SpellE.Width, SpellE.mCollision, SpellE.hCollsion, myHero)
-
 					GetCombo = false
 					ComboTarget = Target
+
+
 
 					if Ddis and ComboTarget and thp > QWEdmg then CastItem(3128, ComboTarget) end -- DFG Cast
 
@@ -457,6 +472,7 @@ function Combo()
 
 								me:CastSpell(1, ComboTarget.x, ComboTarget.z)--W Cast
 								Allclass.DelayAction(function()
+									local PPos, WHC  = BasicPrediction.GetPredictedPosition(ComboTarget, SpellE.Range, SpellE.Speed, SpellE.Delay, SpellE.Width, SpellE.mCollision, SpellE.hCollsion, myHero)
 									if not GetCombo and Target == ComboTarget and ValidTarget(ComboTarget, Erange) and Eready and PPos and PPos.x and PPos.y and PPos.z and WHC >= 2 then 
 
 										me:CastSpell(2, PPos.x, PPos.z)-- E Cast
@@ -582,8 +598,6 @@ function Combo()
 
 				elseif Qready and (Eready2 or Eready) and Rready and Qdis then -- Q > R > E
 
-					local PPos, WHC  = BasicPrediction.GetPredictedPosition(Target, SpellE.Range, SpellE.Speed, SpellE.Delay, SpellE.Width, SpellE.mCollision, SpellE.hCollsion, myHero)
-
 						ComboTarget = Target
 						GetCombo = false
 
@@ -593,6 +607,7 @@ function Combo()
 
 								me:CastSpell(3, ComboTarget)--R Cast
 								Allclass.DelayAction(function()
+									local PPos, WHC  = BasicPrediction.GetPredictedPosition(ComboTarget, SpellE.Range, SpellE.Speed, SpellE.Delay, SpellE.Width, SpellE.mCollision, SpellE.hCollsion, myHero)
 									if not GetCombo and Target == ComboTarget and ValidTarget(ComboTarget, Erange) and Eready and PPos and PPos.x and PPos.y and PPos.z and WHC >= 2 then 
 
 										me:CastSpell(2, PPos.x, PPos.z)--E Cast
@@ -620,11 +635,12 @@ function Combo()
 
 				elseif Eready and Edis and not ((Qready and Wready2 and Eready2 and Rready) or (Qready and (Eready2 or Eready) and (Wready or Wready2)) or (Qready and Wready2) or (Qready and Wready2 and Rready)) then
 
-					local PPos, WHC  = BasicPrediction.GetPredictedPosition(Target, SpellE.Range, SpellE.Speed, SpellE.Delay, SpellE.Width, SpellE.mCollision, SpellE.hCollsion, myHero)
+					ComboTarget = Target
+
+					local PPos, WHC  = BasicPrediction.GetPredictedPosition(ComboTarget, SpellE.Range, SpellE.Speed, SpellE.Delay, SpellE.Width, SpellE.mCollision, SpellE.hCollsion, myHero)
 
 					if PPos and PPos.x and PPos.y and PPos.z and WHC >= 2 then 
 
-					ComboTarget = Target
 					me:CastSpell(2, PPos.x, PPos.z) 
 					GetCombo = true 
 
@@ -646,7 +662,136 @@ function Combo()
 
 					elseif ultprex == 4 and Leblanc.Combo.useme:Value() then
 
-						local PPos, WHC  = BasicPrediction.GetPredictedPosition(Target, SpellE.Range, SpellE.Speed, SpellE.Delay, SpellE.Width, SpellE.mCollision, SpellE.hCollsion, myHero)
+						local PPos, WHC  = BasicPrediction.GetPredictedPosition(ComboTarget, SpellE.Range, SpellE.Speed, SpellE.Delay, SpellE.Width, SpellE.mCollision, SpellE.hCollsion, myHero)
+
+						if PPos and PPos.x and PPos.y and PPos.z and WHC >= 2 then 
+
+						me:CastSpell(3, PPos.x, PPos.z) 
+						GetCombo = true 
+
+						end
+					end
+				end
+			end
+		end
+
+	elseif Leblanc.combokey:IsPressed() and Leblanc.Combo.safe:Value() then
+
+		ResetCombo()
+
+		if ValidTarget(Target) then
+
+		local me 			= 	myHero
+		local Wready2		=	me:GetSpellData(1).currentCd < 0.5
+		local Eready2		=	me:GetSpellData(2).currentCd < 1
+		local thp			= 	Target.health
+		
+			if GetCombo then
+
+				if Qready and (Eready2 or Eready) and Rready and Qdis then -- Q > R > E
+
+					local Qdmg		=	me:CalcMagicDamage(Target, (25*me:GetSpellData(0).level+0.4*me.ap))
+					local Wdmg		=	me:CalcMagicDamage(Target, (40*me:GetSpellData(1).level+45+0.6*me.ap))
+					local Edmg		=	me:CalcMagicDamage(Target, (25*me:GetSpellData(2).level+15+0.5*me.ap))	
+					local Ddmg		=	me:CalcMagicDamage(Target, (0.15*Target.maxHealth))
+					local RQdmg		=	me:CalcMagicDamage(Target, (100*me:GetSpellData(3).level+0.65*me.ap))
+
+					local QRdmg		=	Qdmg*2+RQdmg
+
+					ComboTarget = Target
+					GetCombo = false
+
+						if Ddis and ComboTarget and thp > QRdmg then CastItem(3128, ComboTarget) end
+
+						me:CastSpell(0, ComboTarget)--Q Cast
+						Allclass.DelayAction(function()
+							if not GetCombo and Target == ComboTarget and ValidTarget(ComboTarget, Qrange) and Rready then
+
+								me:CastSpell(3, ComboTarget)--R Cast
+								Allclass.DelayAction(function()
+									local PPos, WHC  = BasicPrediction.GetPredictedPosition(ComboTarget, SpellE.Range, SpellE.Speed, SpellE.Delay, SpellE.Width, SpellE.mCollision, SpellE.hCollsion, myHero)
+									if not GetCombo and Target == ComboTarget and ValidTarget(ComboTarget, Erange) and Eready and PPos and PPos.x and PPos.y and PPos.z and WHC >= 2 then 
+
+										me:CastSpell(2, PPos.x, PPos.z)--E Cast
+										GetCombo = true
+									else
+										GetCombo = true
+									end
+								end, 480)
+							else
+								GetCombo = true
+							end
+						end, Qdelay)
+
+				elseif Qready and Rready and Qdis then -- Q -> R ~DFG
+
+					local Qdmg		=	me:CalcMagicDamage(Target, (25*me:GetSpellData(0).level+0.4*me.ap))
+					local Wdmg		=	me:CalcMagicDamage(Target, (40*me:GetSpellData(1).level+45+0.6*me.ap))
+					local Edmg		=	me:CalcMagicDamage(Target, (25*me:GetSpellData(2).level+15+0.5*me.ap))	
+					local Ddmg		=	me:CalcMagicDamage(Target, (0.15*Target.maxHealth))
+					local RQdmg		=	me:CalcMagicDamage(Target, (100*me:GetSpellData(3).level+0.65*me.ap))
+
+					local QRdmg		=	Qdmg*2+RQdmg
+
+					GetCombo = false
+					ComboTarget = Target
+
+						if Ddis and ComboTarget and thp > QRdmg then CastItem(3128, ComboTarget) end
+
+						GetCombo = false
+
+						if thp < QRdmg and thp > Qdmg then
+
+							me:CastSpell(0, ComboTarget)--Q Cast
+							Allclass.DelayAction(function()
+								if not GetCombo and Target == ComboTarget and ValidTarget(ComboTarget, Qrange) and Rready then
+
+									me:CastSpell(3, ComboTarget)--R Cast
+									GetCombo = true
+								else
+									GetCombo = true
+								end
+							end, Qdelay)
+
+						elseif Qready then
+
+						 	me:CastSpell(0, ComboTarget)--Q Cast
+							GetCombo = true
+
+						end
+
+				elseif Qready and Qdis and not ((Qready and (Eready2 or Eready) and Rready) or (Qready and Rready)) then 
+
+					ComboTarget = Target
+					me:CastSpell(0, ComboTarget) 
+					GetCombo = true 
+
+
+				elseif Eready and Edis and not ((Qready and (Eready2 or Eready) and Rready) or (Qready and Rready)) then 
+
+					ComboTarget = Target
+
+					local PPos, WHC  = BasicPrediction.GetPredictedPosition(ComboTarget, SpellE.Range, SpellE.Speed, SpellE.Delay, SpellE.Width, SpellE.mCollision, SpellE.hCollsion, myHero)
+
+					if PPos and PPos.x and PPos.y and PPos.z and WHC >= 2 then 
+
+					me:CastSpell(2, PPos.x, PPos.z) 
+					GetCombo = true 
+
+					end
+
+				elseif Rready and not ((Qready and (Eready2 or Eready) and Rready) or (Qready and Rready)) then 
+
+					ComboTarget = Target
+
+					if ultprex == 1 then
+
+						me:CastSpell(3, ComboTarget) 
+						GetCombo = true 
+
+					elseif ultprex == 4 and Leblanc.Combo.useme:Value() then
+
+						local PPos, WHC  = BasicPrediction.GetPredictedPosition(ComboTarget, SpellE.Range, SpellE.Speed, SpellE.Delay, SpellE.Width, SpellE.mCollision, SpellE.hCollsion, myHero)
 
 						if PPos and PPos.x and PPos.y and PPos.z and WHC >= 2 then 
 
@@ -680,8 +825,7 @@ function Combo()
 				local Wready2	=	me:GetSpellData(1).currentCd < 0.5
 				local Eready2	=	me:GetSpellData(2).currentCd < 1
 				local thp		= 	Target.health
-
-				local PPos, WHC  = BasicPrediction.GetPredictedPosition(Target, SpellE.Range, SpellE.Speed, SpellE.Delay, SpellE.Width, SpellE.mCollision, SpellE.hCollsion, myHero)
+			
 
 				if GetCombo then
 
@@ -696,10 +840,12 @@ function Combo()
 
 									me:CastSpell(1, ComboTarget.x, ComboTarget.z)--W Cast
 									Allclass.DelayAction(function()
+										local PPos, WHC  = BasicPrediction.GetPredictedPosition(ComboTarget, SpellE.Range, SpellE.Speed, SpellE.Delay, SpellE.Width, SpellE.mCollision, SpellE.hCollsion, myHero)
 										if not GetCombo and Target == ComboTarget and ValidTarget(ComboTarget, Erange) and Eready and PPos and PPos.x and PPos.y and PPos.z and WHC >= 2 then 
 
 											me:CastSpell(2, PPos.x, PPos.z)--E Cast
 											Allclass.DelayAction(function()
+												local PPos, WHC  = BasicPrediction.GetPredictedPosition(ComboTarget, SpellE.Range, SpellE.Speed, SpellE.Delay, SpellE.Width, SpellE.mCollision, SpellE.hCollsion, myHero)
 												if not GetCombo and Target == ComboTarget and ValidTarget(ComboTarget, Erange) and Rready and PPos and PPos.x and PPos.y and PPos.z and WHC >= 2 then
 
 													me:CastSpell(3, PPos.x, PPos.z) --RE Cast
@@ -724,10 +870,12 @@ function Combo()
 
 						me:CastSpell(1, ComboTarget.x, ComboTarget.z)--W Cast
 						Allclass.DelayAction(function()
+							local PPos, WHC  = BasicPrediction.GetPredictedPosition(ComboTarget, SpellE.Range, SpellE.Speed, SpellE.Delay, SpellE.Width, SpellE.mCollision, SpellE.hCollsion, myHero)
 							if not GetCombo and Target == ComboTarget and ValidTarget(ComboTarget, Erange) and Eready and PPos and PPos.x and PPos.y and PPos.z and WHC >= 2 then 
 
 								me:CastSpell(2, PPos.x, PPos.z)--E Cast
 								Allclass.DelayAction(function()
+									local PPos, WHC  = BasicPrediction.GetPredictedPosition(ComboTarget, SpellE.Range, SpellE.Speed, SpellE.Delay, SpellE.Width, SpellE.mCollision, SpellE.hCollsion, myHero)
 									if not GetCombo and Target == ComboTarget and ValidTarget(ComboTarget, Erange) and Rready and PPos and PPos.x and PPos.y and PPos.z and WHC >= 2 then 
 
 										me:CastSpell(3, PPos.x, PPos.z)--RE Cast
@@ -748,6 +896,7 @@ function Combo()
 
 						me:CastSpell(2, PPos.x, PPos.z) --E Cast
 						Allclass.DelayAction(function()
+							local PPos, WHC  = BasicPrediction.GetPredictedPosition(ComboTarget, SpellE.Range, SpellE.Speed, SpellE.Delay, SpellE.Width, SpellE.mCollision, SpellE.hCollsion, myHero)
 							if not GetCombo and Target == ComboTarget and ValidTarget(ComboTarget, Erange) and Rready and PPos and PPos.x and PPos.y and PPos.z and WHC >= 2 then 
 
 								me:CastSpell(3, PPos.x, PPos.z) --ER Cast
@@ -776,11 +925,12 @@ function Combo()
 						GetCombo = true 				
 
 
-					elseif Rready and not ((Qready and Wready2 and Eready2 and Rready) or (Qready and Wready2 and Rready) or (Qready and Rready)) and PPos and PPos.x and PPos.y and PPos.z and WHC >= 2 then 
+					elseif Rready and not ((Qready and Wready2 and Eready2 and Rready) or (Qready and Wready2 and Rready) or (Qready and Rready)) then 
 
 						ComboTarget = Target
 
-						if ultprex == 4 then
+						local PPos, WHC  = BasicPrediction.GetPredictedPosition(ComboTarget, SpellE.Range, SpellE.Speed, SpellE.Delay, SpellE.Width, SpellE.mCollision, SpellE.hCollsion, myHero)
+						if ultprex == 4 and PPos and PPos.x and PPos.y and PPos.z and WHC >= 2 then 
 
 							me:CastSpell(3, PPos.x, PPos.z)
 							GetCombo = true 
@@ -793,6 +943,7 @@ function Combo()
 		end
 	end
 end
+
 
 function ResetHarass()
 	if HarrassTarget and (Harrass ~= Target or not ValidTarget(Harrass)) then
@@ -848,7 +999,7 @@ function Harass()
 				end, Qdelay)
 
 
-			elseif  Qdis and Qready and (Wready2 or Wready) and Leblanc.Harass.useq:Value() and Leblanc.Harass.usew:Value() then
+			elseif Qdis and Qready and (Wready2 or Wready) and Leblanc.Harass.useq:Value() and Leblanc.Harass.usew:Value() then
 
 				GetHarass = false
 				HarrassTarget = Target
