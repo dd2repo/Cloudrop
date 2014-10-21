@@ -360,7 +360,7 @@ function Combo()
 					local Maxdmg	=	Qdmg*2+Wdmg+Edmg+RQdmg*2
 					local MaxDFGdmg	=	Ddmg+1.2*(Qdmg*2+Wdmg+Edmg+RQdmg*2)
 					local QWRdmg	=	Qdmg*2+Wdmg+RQdmg*2
-					local QRdmg		=	Qdmg*2+RQdmg
+					local QRdmg	=	Qdmg*2+RQdmg
 					local QWdmg 	=	Qdmg*2+Wdmg
 					local QRWdmg	=   Qdmg*2+RQdmg*2+Wdmg
 
